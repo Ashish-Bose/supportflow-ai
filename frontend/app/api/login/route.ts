@@ -9,8 +9,16 @@ export async function POST(req: Request) {
     const email = body.email;
     const password = body.password;
 
-    console.log("ADMIN_EMAIL exists:", !!process.env.ADMIN_EMAIL);
-console.log("ADMIN_PASSWORD exists:", !!process.env.ADMIN_PASSWORD);
+    if (!process.env.JWT_SECRET) {
+      return NextResponse.json(
+        {
+          error: "Server is not configured",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
 
     if (
       email !== process.env.ADMIN_EMAIL ||

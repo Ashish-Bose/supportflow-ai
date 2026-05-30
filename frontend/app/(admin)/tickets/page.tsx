@@ -253,30 +253,33 @@ export default function TicketsPage() {
             <div className="flex flex-wrap gap-3 mt-6">
 
               <button
-                onClick={() =>
-                  updateStatus(ticket.id, "OPEN")
-                }
+                onClick={(event) => {
+                  event.stopPropagation();
+                  updateStatus(ticket.id, "OPEN");
+                }}
                 className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
               >
                 OPEN
               </button>
 
               <button
-                onClick={() =>
+                onClick={(event) => {
+                  event.stopPropagation();
                   updateStatus(
                     ticket.id,
                     "IN_PROGRESS"
-                  )
-                }
+                  );
+                }}
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg"
               >
                 IN PROGRESS
               </button>
 
               <button
-                onClick={() =>
-                  updateStatus(ticket.id, "CLOSED")
-                }
+                onClick={(event) => {
+                  event.stopPropagation();
+                  updateStatus(ticket.id, "CLOSED");
+                }}
                 className="bg-green-500 text-white px-4 py-2 rounded-lg"
               >
                 CLOSED

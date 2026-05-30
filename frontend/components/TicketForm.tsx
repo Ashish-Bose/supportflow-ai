@@ -65,10 +65,14 @@ export default function TicketForm() {
         email: "",
         issue: "",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to submit ticket";
+
       setErrorMessage(
-        error.message ||
-          "Failed to submit ticket"
+        message
       );
     } finally {
       setLoading(false);

@@ -206,12 +206,31 @@ export async function POST(
       issue,
     } = body;
 
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof issue !== "string" ||
+      !name.trim() ||
+      !email.trim() ||
+      !issue.trim()
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Name, email, and issue are required",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
     const ticket =
       await prisma.ticket.create({
         data: {
-          name,
-          email,
-          issue,
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          issue: issue.trim(),
 
           priority:
             "MEDIUM",
@@ -229,14 +248,14 @@ export async function POST(
   ticket.id
 );
 
-processTicket(ticket.id);
+await processTicket(ticket.id);
 
-    return NextResponse.json(
-      ticket,
-      {
-        status: 201,
-      }
-    );
+return NextResponse.json(
+  ticket,
+  {
+    status: 201,
+  }
+);
   } catch (error) {
     console.error(
       "Ticket creation error:",
@@ -305,6 +324,28 @@ const {
   status,
 } = body;
 
+const allowedStatuses = [
+  "OPEN",
+  "IN_PROGRESS",
+  "CLOSED",
+];
+
+if (
+  typeof id !== "string" ||
+  typeof status !== "string" ||
+  !allowedStatuses.includes(status)
+) {
+  return NextResponse.json(
+    {
+      error:
+        "Valid ticket id and status are required",
+    },
+    {
+      status: 400,
+    }
+  );
+}
+
 const existingTicket =
   await prisma.ticket.findUnique({
     where: {
@@ -325,23 +366,34 @@ if (!existingTicket) {
 }
 
 const updatedTicket =
-  await prisma.ticket.update({
-    where: {
-      id,
-    },
-    data: {
-      status,
-    },
-  });
+  await prisma.$transaction(
+    async (tx) => {
+      const ticket =
+        await tx.ticket.update({
+          where: {
+            id,
+          },
+          data: {
+            status,
+          },
+        });
 
-await prisma.ticketHistory.create({
-  data: {
-    ticketId: id,
-    oldStatus:
-      existingTicket.status,
-    newStatus: status,
-  },
-});
+      if (
+        existingTicket.status !== status
+      ) {
+        await tx.ticketHistory.create({
+          data: {
+            ticketId: id,
+            oldStatus:
+              existingTicket.status,
+            newStatus: status,
+          },
+        });
+      }
+
+      return ticket;
+    }
+  );
 
 return NextResponse.json(
   updatedTicket

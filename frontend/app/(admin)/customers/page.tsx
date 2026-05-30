@@ -147,14 +147,14 @@ useEffect(() => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center dark:text-white">
         Loading Customers...
       </div>
     );
   }
 
   return (
-    <div>
+  <div className="max-w-7xl mx-auto">
 
       {/* HEADER */}
       <div className="mb-8">
@@ -163,14 +163,14 @@ useEffect(() => {
           Customers
         </h1>
 
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 dark:text-gray-400 mt-2">
           Manage customer activity and support history
         </p>
 
       </div>
 
       {/* SEARCH */}
-      <div className="bg-white p-6 rounded-2xl shadow mb-8">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-2xl shadow mb-8">
 
         <input
           type="text"
@@ -179,17 +179,17 @@ useEffect(() => {
           onChange={(e) =>
             setSearch(e.target.value)
           }
-          className="w-full border p-4 rounded-lg"
+          className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-black dark:text-white p-4 rounded-lg"
         />
 
       </div>
 
       {/* STATS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 
-        <div className="bg-white p-6 rounded-2xl shadow">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-2xl shadow">
 
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             Total Customers
           </p>
 
@@ -231,13 +231,13 @@ useEffect(() => {
       </div>
 
       {/* CUSTOMERS TABLE */}
-      <div className="bg-white rounded-2xl shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow overflow-hidden">
 
         <div className="overflow-x-auto">
 
           <table className="w-full">
 
-            <thead className="bg-gray-100">
+            <thead className="bg-gray-100 dark:bg-gray-950">
 
               <tr>
 
@@ -275,7 +275,7 @@ useEffect(() => {
 
   <tr
     key={customer.email}
-    className="border-t hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+    className="border-t border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
     onClick={() =>
       window.location.href =
         `/customers/${encodeURIComponent(
@@ -293,7 +293,7 @@ useEffect(() => {
                         {customer.name}
                       </p>
 
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {customer.email}
                       </p>
 
@@ -329,7 +329,7 @@ useEffect(() => {
                   </td>
 
                   {/* LAST ACTIVITY */}
-                  <td className="p-4 text-sm text-gray-500">
+                 <td className="p-4 text-sm text-gray-500 dark:text-gray-400">
 
                     {new Date(
                       customer.lastActivity

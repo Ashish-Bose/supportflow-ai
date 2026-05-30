@@ -6,6 +6,47 @@ const genAI = new GoogleGenerativeAI(
   process.env.GEMINI_API_KEY || ""
 );
 
+function fallbackAnalysis(issue: string) {
+  const lowerIssue = issue.toLowerCase();
+
+  const isHighPriority =
+    /\b(urgent|critical|down|outage|failed|failure|broken|cannot|can't|unable|payment|security|breach)\b/.test(
+      lowerIssue
+    );
+
+  const isLowPriority =
+    /\b(question|how do i|how to|feature request|suggestion|minor)\b/.test(
+      lowerIssue
+    );
+
+  const isNegative =
+    /\b(angry|frustrated|bad|terrible|unhappy|disappointed|not working|broken)\b/.test(
+      lowerIssue
+    );
+
+  const priority = isHighPriority
+    ? "HIGH"
+    : isLowPriority
+    ? "LOW"
+    : "MEDIUM";
+
+  const sentiment = isNegative
+    ? "Negative"
+    : "Neutral";
+
+  return {
+    summary:
+      issue.length > 160
+        ? `${issue.slice(0, 157)}...`
+        : issue,
+    sentiment,
+    priority,
+    reply:
+      "Thanks for reaching out. We have received your request and our support team will review it shortly. We will follow up with the next steps as soon as possible.",
+    source: "rules-fallback",
+  };
+}
+
 async function ollamaAnalysis(issue: string) {
   const prompt = `
 You are an expert customer support analyst.
@@ -68,6 +109,12 @@ export async function POST(req: Request) {
 
     // TRY GEMINI FIRST
     try {
+      if (!process.env.GEMINI_API_KEY) {
+        return NextResponse.json(
+          fallbackAnalysis(issue)
+        );
+      }
+
       const model = genAI.getGenerativeModel({
         model: "gemini-2.0-flash",
       });
@@ -134,18 +181,12 @@ Rules:
         });
       } catch (ollamaError) {
         console.error(
-          "Ollama Failed",
+          "Ollama Failed - Using fallback analysis",
           ollamaError
         );
 
         return NextResponse.json(
-          {
-            error:
-              "Both Gemini and Ollama failed",
-          },
-          {
-            status: 500,
-          }
+          fallbackAnalysis(issue)
         );
       }
     }

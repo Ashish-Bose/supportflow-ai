@@ -27,6 +27,9 @@ type Ticket = {
   sentiment?: string;
   aiReply?: string;
   aiSource?: string;
+  category?: string;
+  firstResponseAt?: string | null;
+  resolvedAt?: string | null;
 
   createdAt: string;
 };
@@ -107,6 +110,54 @@ const failedAI = tickets.filter(
   (ticket) =>
     ticket.aiStatus === "FAILED"
 ).length;
+
+const ticketsWithFirstResponse =
+  tickets.filter(
+    (ticket) => ticket.firstResponseAt
+  );
+
+const ticketsWithResolution =
+  tickets.filter(
+    (ticket) => ticket.resolvedAt
+  );
+
+const avgResponseMinutes =
+  ticketsWithFirstResponse.length === 0
+    ? 0
+    : Math.round(
+        ticketsWithFirstResponse.reduce(
+          (total, ticket) =>
+            total +
+            (new Date(
+              ticket.firstResponseAt as string
+            ).getTime() -
+              new Date(
+                ticket.createdAt
+              ).getTime()),
+          0
+        ) /
+          ticketsWithFirstResponse.length /
+          60000
+      );
+
+const avgResolutionHours =
+  ticketsWithResolution.length === 0
+    ? 0
+    : Math.round(
+        ticketsWithResolution.reduce(
+          (total, ticket) =>
+            total +
+            (new Date(
+              ticket.resolvedAt as string
+            ).getTime() -
+              new Date(
+                ticket.createdAt
+              ).getTime()),
+          0
+        ) /
+          ticketsWithResolution.length /
+          3600000
+      );
 
   const statusChartData = [
     {
@@ -203,6 +254,24 @@ const failedAI = tickets.filter(
 
   const primaryAIProvider =
     Object.entries(aiSourceCounts).sort(
+      (a, b) => b[1] - a[1]
+    )[0]?.[0] || "N/A";
+
+  const categoryCounts = tickets.reduce(
+    (acc, ticket) => {
+      const category =
+        ticket.category || "GENERAL";
+
+      acc[category] =
+        (acc[category] || 0) + 1;
+
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  const topCategory =
+    Object.entries(categoryCounts).sort(
       (a, b) => b[1] - a[1]
     )[0]?.[0] || "N/A";
 
@@ -304,6 +373,36 @@ const failedAI = tickets.filter(
 
           <p className="text-4xl font-bold text-green-500 mt-2">
             {closedTickets}
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow">
+          <p className="text-sm text-gray-500">
+            Avg First Response
+          </p>
+
+          <p className="text-4xl font-bold text-blue-500 mt-2">
+            {avgResponseMinutes}m
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow">
+          <p className="text-sm text-gray-500">
+            Avg Resolution
+          </p>
+
+          <p className="text-4xl font-bold text-green-500 mt-2">
+            {avgResolutionHours}h
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow">
+          <p className="text-sm text-gray-500">
+            Top Category
+          </p>
+
+          <p className="text-2xl font-bold mt-3">
+            {topCategory.replace("_", " ")}
           </p>
         </div>
 

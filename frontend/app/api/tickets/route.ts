@@ -5,6 +5,7 @@ import {
   sendCustomerEmail,
   sendAdminEmail,
 } from "@/lib/email";
+import { isReadOnlyUser } from "@/lib/auth";
 
 const genAI = new GoogleGenerativeAI(
   process.env.GEMINI_API_KEY || ""
@@ -38,6 +39,25 @@ function fallbackAnalysis(issue: string) {
     ? "Negative"
     : "Neutral";
 
+  const category =
+    /\b(invoice|billing|payment|refund|charge|subscription|plan)\b/.test(
+      lowerIssue
+    )
+      ? "BILLING"
+      : /\b(login|password|sign in|signin|account locked|reset)\b/.test(
+          lowerIssue
+        )
+      ? "LOGIN_ISSUE"
+      : /\b(access|permission|role|invite|admin|authorized)\b/.test(
+          lowerIssue
+        )
+      ? "ACCESS"
+      : /\b(error|bug|crash|broken|not working|failed|failure)\b/.test(
+          lowerIssue
+        )
+      ? "TECHNICAL"
+      : "GENERAL";
+
   return {
     summary:
       issue.length > 160
@@ -45,6 +65,7 @@ function fallbackAnalysis(issue: string) {
         : issue,
     sentiment,
     priority,
+    category,
     reply:
       "Thanks for reaching out. We have received your request and our support team will review it shortly. We will follow up with the next steps as soon as possible.",
     source: "rules-fallback",
@@ -79,6 +100,7 @@ Return ONLY JSON:
   "summary": "short summary",
   "sentiment": "Positive | Neutral | Negative",
   "priority": "LOW | MEDIUM | HIGH",
+  "category": "BILLING | LOGIN_ISSUE | ACCESS | TECHNICAL | GENERAL",
   "reply": "professional support response"
 }
 `;
@@ -102,6 +124,8 @@ Return ONLY JSON:
       summary: analysis.summary,
       sentiment: analysis.sentiment,
       priority: analysis.priority,
+      category:
+        analysis.category || "GENERAL",
       reply: analysis.reply,
       source: "gemini",
     };
@@ -161,6 +185,9 @@ async function processTicket(
         data: {
           priority:
             aiAnalysis.priority,
+
+          category:
+            aiAnalysis.category,
 
           aiSummary:
             aiAnalysis.summary,
@@ -336,6 +363,11 @@ export async function GET() {
           createdAt: "desc",
         },
       },
+      comments: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     },
 
     orderBy: {
@@ -368,6 +400,18 @@ export async function PATCH(
   req: Request
 ) {
   try {
+if (isReadOnlyUser(req)) {
+  return NextResponse.json(
+    {
+      error:
+        "Demo account has view-only access",
+    },
+    {
+      status: 403,
+    }
+  );
+}
+
       const body =
   await req.json();
 
@@ -420,6 +464,8 @@ if (!existingTicket) {
 const updatedTicket =
   await prisma.$transaction(
     async (tx) => {
+      const now = new Date();
+
       const ticket =
         await tx.ticket.update({
           where: {
@@ -427,6 +473,17 @@ const updatedTicket =
           },
           data: {
             status,
+            firstResponseAt:
+              status !== "OPEN" &&
+              !existingTicket.firstResponseAt
+                ? now
+                : existingTicket.firstResponseAt,
+            resolvedAt:
+              status === "CLOSED"
+                ? now
+                : status === "OPEN"
+                ? null
+                : existingTicket.resolvedAt,
           },
         });
 

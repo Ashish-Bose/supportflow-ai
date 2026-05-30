@@ -18,6 +18,7 @@ type Ticket = {
   sentiment?: string;
   aiReply?: string;
   aiSource?: string;
+  category?: string;
 };
 
 export default function TicketsPage() {
@@ -28,6 +29,7 @@ export default function TicketsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [priorityFilter, setPriorityFilter] = useState("ALL");
+  const [categoryFilter, setCategoryFilter] = useState("ALL");
 
   async function fetchTickets() {
     try {
@@ -87,10 +89,15 @@ export default function TicketsPage() {
         priorityFilter === "ALL" ||
         ticket.priority === priorityFilter;
 
+      const matchesCategory =
+        categoryFilter === "ALL" ||
+        ticket.category === categoryFilter;
+
       return (
         matchesSearch &&
         matchesStatus &&
-        matchesPriority
+        matchesPriority &&
+        matchesCategory
       );
     });
   }, [
@@ -98,6 +105,7 @@ export default function TicketsPage() {
     search,
     statusFilter,
     priorityFilter,
+    categoryFilter,
   ]);
 
   function getPriorityClasses(priority: string) {
@@ -141,7 +149,7 @@ export default function TicketsPage() {
       </div>
 
       <div className="bg-white p-6 rounded-2xl shadow mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
           <input
             type="text"
@@ -183,6 +191,29 @@ export default function TicketsPage() {
               MEDIUM
             </option>
             <option value="HIGH">HIGH</option>
+          </select>
+
+          <select
+            value={categoryFilter}
+            onChange={(e) =>
+              setCategoryFilter(e.target.value)
+            }
+            className="border p-3 rounded-lg"
+          >
+            <option value="ALL">
+              All Categories
+            </option>
+            <option value="BILLING">BILLING</option>
+            <option value="LOGIN_ISSUE">
+              LOGIN ISSUE
+            </option>
+            <option value="ACCESS">ACCESS</option>
+            <option value="TECHNICAL">
+              TECHNICAL
+            </option>
+            <option value="GENERAL">
+              GENERAL
+            </option>
           </select>
 
         </div>
@@ -244,6 +275,12 @@ export default function TicketsPage() {
 
                 <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-center">
                   {ticket.aiSource || "AI"}
+                </span>
+
+                <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-center">
+                  {(ticket.category ||
+                    "GENERAL"
+                  ).replace("_", " ")}
                 </span>
 
               </div>

@@ -15,6 +15,7 @@ model Ticket {
   issue String
 
   priority String @default("MEDIUM")
+  category String @default("GENERAL")
 
   status String @default("OPEN")
 
@@ -26,8 +27,11 @@ model Ticket {
   aiSource  String?
 
   createdAt DateTime @default(now())
+  firstResponseAt DateTime?
+  resolvedAt DateTime?
 
   history TicketHistory[]
+  comments TicketComment[]
 }
 
 model TicketHistory {
@@ -37,6 +41,18 @@ model TicketHistory {
 
   oldStatus String
   newStatus String
+
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model TicketComment {
+  id String @id @default(cuid())
+
+  ticketId String
+  author   String @default("Admin")
+  body     String
 
   createdAt DateTime @default(now())
 

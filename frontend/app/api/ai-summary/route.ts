@@ -34,6 +34,25 @@ function fallbackAnalysis(issue: string) {
     ? "Negative"
     : "Neutral";
 
+  const category =
+    /\b(invoice|billing|payment|refund|charge|subscription|plan)\b/.test(
+      lowerIssue
+    )
+      ? "BILLING"
+      : /\b(login|password|sign in|signin|account locked|reset)\b/.test(
+          lowerIssue
+        )
+      ? "LOGIN_ISSUE"
+      : /\b(access|permission|role|invite|admin|authorized)\b/.test(
+          lowerIssue
+        )
+      ? "ACCESS"
+      : /\b(error|bug|crash|broken|not working|failed|failure)\b/.test(
+          lowerIssue
+        )
+      ? "TECHNICAL"
+      : "GENERAL";
+
   return {
     summary:
       issue.length > 160
@@ -41,6 +60,7 @@ function fallbackAnalysis(issue: string) {
         : issue,
     sentiment,
     priority,
+    category,
     reply:
       "Thanks for reaching out. We have received your request and our support team will review it shortly. We will follow up with the next steps as soon as possible.",
     source: "rules-fallback",
@@ -62,6 +82,7 @@ Return exactly:
   "summary": "short summary",
   "sentiment": "Positive | Neutral | Negative",
   "priority": "LOW | MEDIUM | HIGH",
+  "category": "BILLING | LOGIN_ISSUE | ACCESS | TECHNICAL | GENERAL",
   "reply": "professional customer support response"
 }
 
@@ -159,6 +180,8 @@ Rules:
         summary: analysis.summary,
         sentiment: analysis.sentiment,
         priority: analysis.priority,
+        category:
+          analysis.category || "GENERAL",
         reply: analysis.reply,
         source: "gemini",
       });
@@ -176,6 +199,8 @@ Rules:
           summary: analysis.summary,
           sentiment: analysis.sentiment,
           priority: analysis.priority,
+          category:
+            analysis.category || "GENERAL",
           reply: analysis.reply,
           source: "ollama",
         });

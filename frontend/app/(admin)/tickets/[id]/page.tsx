@@ -20,7 +20,10 @@ type Ticket = {
   aiReply?: string;
   sentiment?: string;
   aiSource?: string;
+  category?: string;
   createdAt: string;
+  firstResponseAt?: string | null;
+  resolvedAt?: string | null;
 
   history?: {
     id: string;
@@ -28,6 +31,17 @@ type Ticket = {
     newStatus: string;
     createdAt: string;
   }[];
+
+  comments?: {
+    id: string;
+    author: string;
+    body: string;
+    createdAt: string;
+  }[];
+};
+
+type CurrentUser = {
+  role: "admin" | "viewer";
 };
 
 export default function TicketDetailPage() {
@@ -47,6 +61,12 @@ export default function TicketDetailPage() {
 
   const [saving, setSaving] =
   useState(false);
+  const [comment, setComment] =
+    useState("");
+  const [commentSaving, setCommentSaving] =
+    useState(false);
+  const [user, setUser] =
+    useState<CurrentUser | null>(null);
 
   const fetchTicket = useCallback(async () => {
     try {
@@ -120,6 +140,81 @@ async function handleStatusUpdate() {
     fetchTicket();
   }, [fetchTicket]);
 
+  useEffect(() => {
+    fetch("/api/me")
+      .then((response) =>
+        response.ok
+          ? response.json()
+          : null
+      )
+      .then(setUser)
+      .catch(() => setUser(null));
+  }, []);
+
+async function handleAddComment() {
+  if (!comment.trim()) {
+    return;
+  }
+
+  try {
+    setCommentSaving(true);
+
+    const response =
+      await fetch(
+        `/api/tickets/${ticketId}/comments`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            body: comment,
+          }),
+        }
+      );
+
+    if (!response.ok) {
+      throw new Error(
+        "Failed to add comment"
+      );
+    }
+
+    setComment("");
+    await fetchTicket();
+    toast.success("Comment added");
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to add comment");
+  } finally {
+    setCommentSaving(false);
+  }
+}
+
+function formatElapsed(
+  start: string,
+  end?: string | null
+) {
+  if (!end) {
+    return "Not yet";
+  }
+
+  const minutes = Math.max(
+    0,
+    Math.round(
+      (new Date(end).getTime() -
+        new Date(start).getTime()) /
+        60000
+    )
+  );
+
+  if (minutes < 60) {
+    return `${minutes}m`;
+  }
+
+  return `${Math.round(minutes / 60)}h`;
+}
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -190,6 +285,13 @@ async function handleStatusUpdate() {
         </p>
 
         <p>
+          <strong>Category:</strong>{" "}
+          {(ticket.category ||
+            "GENERAL"
+          ).replace("_", " ")}
+        </p>
+
+        <p>
           <strong>AI Status:</strong>{" "}
           {ticket.aiStatus ||
             "Pending"}
@@ -202,11 +304,48 @@ async function handleStatusUpdate() {
         </p>
 
       </div>
-<p>
-  <strong>AI Provider:</strong>{" "}
-  {ticket.aiSource ||
-    "Unknown"}
-</p>
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
+        <h2 className="text-2xl font-bold mb-4">
+          SLA Tracking
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <p className="text-sm text-gray-500">
+              First Response Time
+            </p>
+            <p className="text-2xl font-bold">
+              {formatElapsed(
+                ticket.createdAt,
+                ticket.firstResponseAt
+              )}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-sm text-gray-500">
+              Resolution Time
+            </p>
+            <p className="text-2xl font-bold">
+              {formatElapsed(
+                ticket.createdAt,
+                ticket.resolvedAt
+              )}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-sm text-gray-500">
+              Created
+            </p>
+            <p className="text-base font-semibold">
+              {new Date(
+                ticket.createdAt
+              ).toLocaleString()}
+            </p>
+          </div>
+        </div>
+      </div>
 <div className="mt-6">
 
   <label className="block text-sm font-medium mb-2">
@@ -236,7 +375,10 @@ async function handleStatusUpdate() {
   </select>
   <button
   onClick={handleStatusUpdate}
-  disabled={saving}
+  disabled={
+    saving ||
+    user?.role === "viewer"
+  }
   className="ml-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg"
 >
   {saving
@@ -244,6 +386,73 @@ async function handleStatusUpdate() {
     : "Save Status"}
 </button>
 
+</div>
+<div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
+
+  <h2 className="text-2xl font-bold mb-4">
+    Admin Comments
+  </h2>
+
+  {user?.role === "viewer" ? (
+    <p className="text-sm text-blue-600 mb-4">
+      Demo viewers can read comments but cannot add new ones.
+    </p>
+  ) : (
+    <div className="mb-6">
+      <textarea
+        value={comment}
+        onChange={(event) =>
+          setComment(event.target.value)
+        }
+        rows={4}
+        className="w-full border rounded-xl p-3 dark:bg-gray-800 dark:border-gray-700"
+        placeholder="Add an internal comment..."
+      />
+      <button
+        type="button"
+        onClick={handleAddComment}
+        disabled={
+          commentSaving ||
+          !comment.trim()
+        }
+        className="mt-3 bg-black disabled:bg-gray-400 text-white px-4 py-2 rounded-lg"
+      >
+        {commentSaving
+          ? "Saving..."
+          : "Add Comment"}
+      </button>
+    </div>
+  )}
+
+  {ticket.comments &&
+  ticket.comments.length > 0 ? (
+    <div className="space-y-4">
+      {ticket.comments.map((item) => (
+        <div
+          key={item.id}
+          className="border dark:border-gray-800 rounded-xl p-4"
+        >
+          <div className="flex items-center justify-between gap-3 mb-2">
+            <p className="font-semibold">
+              {item.author}
+            </p>
+            <p className="text-xs text-gray-500">
+              {new Date(
+                item.createdAt
+              ).toLocaleString()}
+            </p>
+          </div>
+          <p className="text-gray-700 dark:text-gray-300">
+            {item.body}
+          </p>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-gray-500">
+      No comments yet.
+    </p>
+  )}
 </div>
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
 

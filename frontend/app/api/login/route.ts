@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
+import { getDemoCredentials } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
@@ -20,10 +21,17 @@ export async function POST(req: Request) {
       );
     }
 
-    if (
-      email !== process.env.ADMIN_EMAIL ||
-      password !== process.env.ADMIN_PASSWORD
-    ) {
+    const demo = getDemoCredentials();
+
+    const isAdmin =
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD;
+
+    const isDemo =
+      email === demo.email &&
+      password === demo.password;
+
+    if (!isAdmin && !isDemo) {
       return NextResponse.json(
         {
           error: "Invalid credentials",
@@ -37,6 +45,12 @@ export async function POST(req: Request) {
     const token = jwt.sign(
       {
         email,
+        name: isDemo
+          ? "Demo Viewer"
+          : "Admin",
+        role: isDemo
+          ? "viewer"
+          : "admin",
       },
       process.env.JWT_SECRET as string,
       {
@@ -58,6 +72,7 @@ export async function POST(req: Request) {
 
     const response = NextResponse.json({
       success: true,
+      role: isDemo ? "viewer" : "admin",
     });
 
     response.headers.set(

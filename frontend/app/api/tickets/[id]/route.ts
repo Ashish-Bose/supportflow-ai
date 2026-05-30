@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { isReadOnlyUser } from "@/lib/auth";
 
 export async function PATCH(
   req: Request,
@@ -10,6 +11,18 @@ export async function PATCH(
   }
 ) {
   try {
+    if (isReadOnlyUser(req)) {
+      return NextResponse.json(
+        {
+          error:
+            "Demo account has view-only access",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
     const { id } = await params;
 
     const body = await req.json();
@@ -57,6 +70,8 @@ export async function PATCH(
     const updatedTicket =
       await prisma.$transaction(
         async (tx) => {
+          const now = new Date();
+
           const ticket =
             await tx.ticket.update({
               where: {
@@ -64,6 +79,17 @@ export async function PATCH(
               },
               data: {
                 status: body.status,
+                firstResponseAt:
+                  body.status !== "OPEN" &&
+                  !existingTicket.firstResponseAt
+                    ? now
+                    : existingTicket.firstResponseAt,
+                resolvedAt:
+                  body.status === "CLOSED"
+                    ? now
+                    : body.status === "OPEN"
+                    ? null
+                    : existingTicket.resolvedAt,
               },
             });
 
@@ -116,6 +142,18 @@ export async function DELETE(
   }
 ) {
   try {
+    if (isReadOnlyUser(req)) {
+      return NextResponse.json(
+        {
+          error:
+            "Demo account has view-only access",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
     const { id } = await params;
 
     await prisma.ticket.delete({

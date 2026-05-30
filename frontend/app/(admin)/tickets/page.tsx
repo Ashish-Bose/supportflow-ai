@@ -137,18 +137,18 @@ export default function TicketsPage() {
 }
 
   return (
-    <div>
+  <div className="max-w-7xl mx-auto">
       <div className="mb-8">
         <h1 className="text-4xl font-bold">
           Tickets Management
         </h1>
 
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 dark:text-gray-400 mt-2">
           AI-powered ticket support dashboard
         </p>
       </div>
 
-      <div className="bg-white p-6 rounded-2xl shadow mb-8">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-2xl shadow mb-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
           <input
@@ -158,7 +158,7 @@ export default function TicketsPage() {
             onChange={(e) =>
               setSearch(e.target.value)
             }
-            className="border p-3 rounded-lg"
+            className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-black dark:text-white p-3 rounded-lg"
           />
 
           <select
@@ -166,7 +166,7 @@ export default function TicketsPage() {
             onChange={(e) =>
               setStatusFilter(e.target.value)
             }
-            className="border p-3 rounded-lg"
+            className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-black dark:text-white p-3 rounded-lg"
           >
             <option value="ALL">All Statuses</option>
             <option value="OPEN">OPEN</option>
@@ -181,7 +181,7 @@ export default function TicketsPage() {
             onChange={(e) =>
               setPriorityFilter(e.target.value)
             }
-            className="border p-3 rounded-lg"
+            className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-black dark:text-white p-3 rounded-lg"
           >
             <option value="ALL">
               All Priorities
@@ -198,7 +198,7 @@ export default function TicketsPage() {
             onChange={(e) =>
               setCategoryFilter(e.target.value)
             }
-            className="border p-3 rounded-lg"
+            className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-black dark:text-white p-3 rounded-lg"
           >
             <option value="ALL">
               All Categories
@@ -230,7 +230,7 @@ export default function TicketsPage() {
       `/tickets/${ticket.id}`
     )
   }
-  className="bg-white p-6 rounded-2xl shadow cursor-pointer hover:shadow-lg transition"
+  className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-2xl shadow cursor-pointer hover:shadow-lg transition"
 >
 
             <div className="flex flex-col md:flex-row md:justify-between gap-4">
@@ -241,7 +241,7 @@ export default function TicketsPage() {
                   {ticket.name}
                 </h2>
 
-                <p className="text-gray-500">
+                <p className="text-gray-500 dark:text-gray-400">
                   {ticket.email}
                 </p>
 
@@ -322,7 +322,7 @@ export default function TicketsPage() {
 
             </div>
 
-            <div className="mt-6 bg-gray-50 border rounded-2xl p-5">
+            <div className="mt-6 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl p-5">
 
               <h3 className="font-bold text-lg mb-2">
                 AI Summary
@@ -337,14 +337,14 @@ export default function TicketsPage() {
                 Suggested Reply
               </h3>
 
-              <div className="bg-white border rounded-xl p-4">
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
                 {ticket.aiReply ||
                   "No AI reply available"}
               </div>
 
             </div>
 
-            <p className="text-sm text-gray-400 mt-4">
+            <p className="text-sm text-gray-400 dark:text-gray-500 mt-4">
               Created:{" "}
               {new Date(
                 ticket.createdAt

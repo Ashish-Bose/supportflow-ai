@@ -30,8 +30,12 @@ if (!isProtectedRoute) {
 
     return NextResponse.next();
   } catch (error) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
+  console.error("JWT VERIFY FAILED:", error);
+
+  return NextResponse.redirect(
+    new URL("/login", req.url)
+  );
+}
 }
 
 export const config = {

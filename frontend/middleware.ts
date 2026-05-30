@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 
 export function middleware(req: NextRequest) {
   
@@ -25,17 +24,7 @@ if (!isProtectedRoute) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  try {
-    jwt.verify(token, process.env.JWT_SECRET!);
-
-    return NextResponse.next();
-  } catch (error) {
-  console.error("JWT VERIFY FAILED:", error);
-
-  return NextResponse.redirect(
-    new URL("/login", req.url)
-  );
-}
+  return NextResponse.next();
 }
 
 export const config = {

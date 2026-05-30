@@ -1,5 +1,3 @@
-import TicketForm from "@/components/TicketForm";
-
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
@@ -10,9 +8,16 @@ export default function Home() {
 
   <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
 
-    <h1 className="text-2xl font-bold">
-      SupportFlow AI
-    </h1>
+    <div className="flex flex-col">
+  <h1 className="text-2xl font-bold leading-none">
+    SupportFlow AI
+  </h1>
+
+  <span className="text-xs text-gray-400 mt-1">
+   Built by Ashish Bose
+  </span>
+</div>
+    
 
     <div className="hidden md:flex items-center gap-8">
 
@@ -24,11 +29,11 @@ export default function Home() {
       </a>
 
       <a
-        href="#ticket-form"
-        className="text-gray-300 hover:text-white"
-      >
-        Demo
-      </a>
+  href="/submit-ticket"
+  className="text-gray-300 hover:text-white"
+>
+  Demo
+</a>
 
       <a
         href="/login"
@@ -38,11 +43,11 @@ export default function Home() {
       </a>
 
       <a
-        href="#ticket-form"
-        className="bg-white text-black px-4 py-2 rounded-xl font-medium"
-      >
-        Get Started
-      </a>
+  href="/submit-ticket"
+  className="bg-white text-black px-4 py-2 rounded-xl font-medium"
+>
+  Get Started
+</a>
 
     </div>
 
@@ -78,11 +83,11 @@ export default function Home() {
             </a>
 
             <a
-              href="#ticket-form"
-              className="border border-white px-6 py-3 rounded-xl font-semibold"
-            >
-              Submit Ticket
-            </a>
+  href="/submit-ticket"
+  className="border border-white px-6 py-3 rounded-xl font-semibold"
+>
+  Submit Ticket
+</a>
 
           </div>
 
@@ -179,12 +184,7 @@ export default function Home() {
 
       {/* TICKET FORM */}
 
-      <section
-        id="ticket-form"
-        className="px-6 py-16"
-      >
-        <TicketForm />
-      </section>
+      
 
     </main>
   );

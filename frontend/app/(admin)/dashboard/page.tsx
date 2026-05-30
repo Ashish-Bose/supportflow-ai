@@ -312,7 +312,7 @@ const avgResolutionHours =
 }
 
   return (
-    <div className="dark:text-white">
+  <div className="max-w-7xl mx-auto dark:text-white">
       {/* HEADER */}
 
       <div className="mb-8">
@@ -437,14 +437,16 @@ const avgResolutionHours =
         </div>
 
         <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow">
-          <p className="text-sm text-gray-500">
-            Negative Sentiment
-          </p>
+  <p className="text-sm text-gray-500">
+    Negative Sentiment
+  </p>
 
-          <p className="text-4xl font-bold text-red-500 mt-2">
-            {negativeSentimentTickets}
-          </p>
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow">
+  <p className="text-4xl font-bold text-red-500 mt-2">
+    {negativeSentimentTickets}
+  </p>
+</div>
+
+<div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow">
   <p className="text-sm text-gray-500">
     AI Pending
   </p>
@@ -468,16 +470,12 @@ const avgResolutionHours =
   <p className="text-sm text-gray-500">
     AI Failed
   </p>
-  
 
   <p className="text-4xl font-bold text-red-500 mt-2">
     {failedAI}
   </p>
 </div>
-        </div>
-
-      </div>
-      
+        </div>   
 
       {/* CHARTS */}
 
@@ -638,46 +636,58 @@ const avgResolutionHours =
   </p>
 </div>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div>
 
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm ${getPriorityBadge(
-                          ticket.priority
-                        )}`}
-                      >
-                        {ticket.priority}
-                      </span>
+  <div className="flex flex-wrap gap-2">
 
-                      <span className="px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-800">
-                        {ticket.status}
-                      </span>
+    <span
+      className={`px-3 py-1 rounded-full text-xs font-medium ${getPriorityBadge(
+        ticket.priority
+      )}`}
+    >
+      {ticket.priority}
+    </span>
 
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm ${getSentimentBadge(
-                          ticket.sentiment
-                        )}`}
-                      >
-                        {ticket.sentiment ||
-                          "Unknown"}
-                      </span>
+    <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+      {ticket.status.replace("_", " ")}
+    </span>
 
-                      <span className="px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-700">
-                        {ticket.aiSource ||
-                          "AI"}
-                      </span>
-                      <span
-  className={`px-3 py-1 rounded-full text-sm ${
-    ticket.aiStatus === "COMPLETED"
-      ? "bg-green-100 text-green-700"
-      : ticket.aiStatus === "FAILED"
-      ? "bg-red-100 text-red-700"
-      : "bg-yellow-100 text-yellow-700"
-  }`}
->
-  {ticket.aiStatus || "PENDING"}
-</span>
+  </div>
 
-                    </div>
+  <div className="mt-3 space-y-1 text-sm text-gray-500">
+
+    <p>
+      Sentiment:{" "}
+      <span className="font-medium text-gray-700 dark:text-gray-300">
+        {ticket.sentiment || "Unknown"}
+      </span>
+    </p>
+
+    <p>
+      AI Source:{" "}
+      <span className="font-medium text-gray-700 dark:text-gray-300">
+        {ticket.aiSource || "AI"}
+      </span>
+    </p>
+
+    <p>
+      AI Status:{" "}
+      <span
+        className={`font-medium ${
+          ticket.aiStatus === "COMPLETED"
+            ? "text-green-600"
+            : ticket.aiStatus === "FAILED"
+            ? "text-red-600"
+            : "text-yellow-600"
+        }`}
+      >
+        {ticket.aiStatus || "PENDING"}
+      </span>
+    </p>
+
+  </div>
+
+</div>
 
                   </div>
 

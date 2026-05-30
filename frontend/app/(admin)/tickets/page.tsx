@@ -251,39 +251,37 @@ export default function TicketsPage() {
 
               </div>
 
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap gap-2 max-w-md">
 
-                <span
-                  className={`px-4 py-2 rounded-full text-center ${getPriorityClasses(
-                    ticket.priority
-                  )}`}
-                >
-                  {ticket.priority}
-                </span>
+  <span
+    className={`px-3 py-1 text-xs font-semibold rounded-full ${getPriorityClasses(
+      ticket.priority
+    )}`}
+  >
+    Priority: {ticket.priority}
+  </span>
 
-                <span className="bg-gray-100 px-4 py-2 rounded-full text-center">
-                  {ticket.status}
-                </span>
+  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
+    Status: {ticket.status.replace("_", " ")}
+  </span>
 
-                <span
-                  className={`px-4 py-2 rounded-full text-center ${getSentimentClasses(
-                    ticket.sentiment || ""
-                  )}`}
-                >
-                  {ticket.sentiment || "Unknown"}
-                </span>
+  <span
+    className={`px-3 py-1 text-xs font-semibold rounded-full ${getSentimentClasses(
+      ticket.sentiment || ""
+    )}`}
+  >
+    Sentiment: {ticket.sentiment || "Unknown"}
+  </span>
 
-                <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-center">
-                  {ticket.aiSource || "AI"}
-                </span>
+  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700">
+    AI: {ticket.aiSource || "AI"}
+  </span>
 
-                <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-center">
-                  {(ticket.category ||
-                    "GENERAL"
-                  ).replace("_", " ")}
-                </span>
+  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700">
+    {(ticket.category || "GENERAL").replace("_", " ")}
+  </span>
 
-              </div>
+</div>
 
             </div>
 

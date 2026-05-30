@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Ticket {
+  id String @id @default(cuid())
+
+  name  String
+  email String
+  issue String
+
+  priority String @default("MEDIUM")
+
+  status String @default("OPEN")
+
+  aiStatus String @default("PENDING")
+
+  aiSummary String?
+  sentiment String?
+  aiReply   String?
+  aiSource  String?
+
+  createdAt DateTime @default(now())
+
+  history TicketHistory[]
+}
+
+model TicketHistory {
+  id String @id @default(cuid())
+
+  ticketId String
+
+  oldStatus String
+  newStatus String
+
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Ticket" ADD COLUMN     "aiStatus" TEXT NOT NULL DEFAULT 'PENDING',
+ALTER COLUMN "priority" SET DEFAULT 'MEDIUM';

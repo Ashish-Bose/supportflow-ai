@@ -75,21 +75,21 @@ export default function Home() {
 
           <div className="flex justify-center gap-4 mt-10">
 
-            <a
-              href="/login"
-              className="bg-white text-black px-6 py-3 rounded-xl font-semibold"
-            >
-              Admin Login
-            </a>
+  <a
+    href="/login"
+    className="bg-white text-black px-6 py-3 rounded-xl font-semibold"
+  >
+    Admin Login
+  </a>
 
-            <a
-  href="/submit-ticket"
-  className="border border-white px-6 py-3 rounded-xl font-semibold"
->
-  Submit Ticket
-</a>
+  <a
+    href="/submit-ticket"
+    className="border border-white px-6 py-3 rounded-xl font-semibold"
+  >
+    Submit Ticket
+  </a>
 
-          </div>
+</div>
 
         </div>
 
@@ -181,7 +181,54 @@ export default function Home() {
   </div>
 
 </section>
+{/* DEMO ACCESS */}
 
+<section className="max-w-4xl mx-auto px-6 py-16">
+
+  <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-10 text-center">
+
+    <h2 className="text-3xl font-bold mb-4">
+      Try the Live Demo
+    </h2>
+
+    <p className="text-gray-400 mb-8">
+      Explore the admin dashboard using the demo credentials below.
+    </p>
+
+    <div className="space-y-4 mb-8">
+
+      <div>
+        <p className="text-sm text-gray-500">
+          Demo Email
+        </p>
+
+        <p className="text-lg font-semibold">
+          demo@supportflow.ai
+        </p>
+      </div>
+
+      <div>
+        <p className="text-sm text-gray-500">
+          Demo Password
+        </p>
+
+        <p className="text-lg font-semibold">
+          SupportFlowDemo123
+        </p>
+      </div>
+
+    </div>
+
+    <a
+      href="/login"
+      className="inline-block bg-white text-black px-6 py-3 rounded-xl font-semibold"
+    >
+      Open Admin Dashboard
+    </a>
+
+  </div>
+
+</section>
       {/* TICKET FORM */}
 
       

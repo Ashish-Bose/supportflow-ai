@@ -70,6 +70,11 @@ async function processTicket(
   ticketId: string
 ) {
   try {
+    console.log(
+      "PROCESSING TICKET:",
+      ticketId
+    );
+
     const ticket =
       await prisma.ticket.findUnique({
         where: {
@@ -81,10 +86,23 @@ async function processTicket(
       return;
     }
 
+    console.log(
+      "CALLING GEMINI"
+    );
+
     const aiAnalysis =
       await analyzeTicket(
         ticket.issue
       );
+
+    console.log(
+      "GEMINI SUCCESS",
+      aiAnalysis
+    );
+
+    console.log(
+      "UPDATING DATABASE"
+    );
 
     const updatedTicket =
       await prisma.ticket.update({
@@ -111,6 +129,14 @@ async function processTicket(
             "COMPLETED",
         },
       });
+
+    console.log(
+      "DATABASE UPDATED"
+    );
+
+    console.log(
+      "SENDING EMAILS"
+    );
 
     await Promise.allSettled([
       sendCustomerEmail({
@@ -143,13 +169,18 @@ async function processTicket(
     ]);
 
     console.log(
+      "EMAILS COMPLETED"
+    );
+
+    console.log(
       `Ticket ${ticketId} processed successfully`
     );
   } catch (error) {
     console.error(
-      "Background processing failed:",
-      error
+      "BACKGROUND PROCESSING FAILED"
     );
+
+    console.error(error);
 
     await prisma.ticket.update({
       where: {
@@ -193,7 +224,12 @@ export async function POST(
         },
       });
 
-    processTicket(ticket.id);
+    console.log(
+  "PROCESS TICKET STARTED:",
+  ticket.id
+);
+
+processTicket(ticket.id);
 
     return NextResponse.json(
       ticket,

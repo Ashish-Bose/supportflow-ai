@@ -1,8 +1,16 @@
 import { Resend } from "resend";
 
-const resend = new Resend(
-  process.env.RESEND_API_KEY
-);
+function getResend() {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error(
+      "RESEND_API_KEY is missing"
+    );
+  }
+
+  return new Resend(
+    process.env.RESEND_API_KEY
+  );
+}
 
 interface CustomerTicket {
   id: string;
@@ -27,6 +35,8 @@ export async function sendCustomerEmail(
   ticket: CustomerTicket
 ) {
   try {
+    const resend = getResend();
+
     const result =
       await resend.emails.send({
         from:
@@ -105,6 +115,8 @@ export async function sendAdminEmail(
   ticket: AdminTicket
 ) {
   try {
+    const resend = getResend();
+
     const result =
       await resend.emails.send({
         from:

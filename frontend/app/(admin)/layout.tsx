@@ -3,10 +3,12 @@
 import Link from "next/link";
 import {
   LogOut,
+  Menu,
   Moon,
   Settings,
   Sun,
   User,
+  X,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
@@ -28,7 +30,12 @@ export default function AdminLayout({
 }) {
   const { theme, setTheme } = useTheme();
   const [menuOpen, setMenuOpen] =
-    useState(false);
+  useState(false);
+
+const [
+  mobileSidebarOpen,
+  setMobileSidebarOpen,
+] = useState(false);
   const [user, setUser] =
     useState<CurrentUser | null>(null);
   const menuRef =
@@ -120,9 +127,29 @@ export default function AdminLayout({
 
       <div className="flex-1 min-w-0">
         <header className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-8 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold">
-            Admin Panel
-          </h2>
+          <div className="flex items-center gap-3">
+
+  <button
+    type="button"
+    onClick={() =>
+      setMobileSidebarOpen(
+        !mobileSidebarOpen
+      )
+    }
+    className="md:hidden p-2 rounded-lg bg-gray-200 dark:bg-gray-800"
+  >
+    {mobileSidebarOpen ? (
+      <X size={20} />
+    ) : (
+      <Menu size={20} />
+    )}
+  </button>
+
+  <h2 className="text-xl font-bold">
+    Admin Panel
+  </h2>
+
+</div>
 
           <div className="flex items-center gap-4">
             <button
@@ -208,6 +235,59 @@ export default function AdminLayout({
             </div>
           </div>
         </header>
+        {mobileSidebarOpen && (
+  <div className="md:hidden bg-black text-white border-b border-gray-800">
+
+    <nav className="p-4 space-y-2">
+
+      <Link
+        href="/dashboard"
+        onClick={() =>
+          setMobileSidebarOpen(false)
+        }
+      >
+        <div className="hover:bg-gray-800 p-3 rounded-lg">
+          Dashboard
+        </div>
+      </Link>
+
+      <Link
+        href="/tickets"
+        onClick={() =>
+          setMobileSidebarOpen(false)
+        }
+      >
+        <div className="hover:bg-gray-800 p-3 rounded-lg">
+          Tickets
+        </div>
+      </Link>
+
+      <Link
+        href="/analytics"
+        onClick={() =>
+          setMobileSidebarOpen(false)
+        }
+      >
+        <div className="hover:bg-gray-800 p-3 rounded-lg">
+          Analytics
+        </div>
+      </Link>
+
+      <Link
+        href="/customers"
+        onClick={() =>
+          setMobileSidebarOpen(false)
+        }
+      >
+        <div className="hover:bg-gray-800 p-3 rounded-lg">
+          Customers
+        </div>
+      </Link>
+
+    </nav>
+
+  </div>
+)}
 
         {user?.role === "viewer" && (
           <div className="bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-200 px-8 py-3 text-sm border-b border-blue-100 dark:border-blue-900 flex items-center gap-2">
@@ -216,7 +296,7 @@ export default function AdminLayout({
           </div>
         )}
 
-        <main className="p-8">
+        <main className="p-4 md:p-8">
           {children}
         </main>
       </div>

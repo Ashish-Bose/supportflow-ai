@@ -2,6 +2,7 @@ import "./globals.css";
 
 import ThemeProvider from "@/components/ThemeProvider";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata = {
   title: "SupportFlow AI",
@@ -20,13 +21,15 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-  {children}
+          {children}
 
-  <Toaster
-    position="top-right"
-    richColors
-  />
-</ThemeProvider>
+          <Toaster
+            position="top-right"
+            richColors
+          />
+
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -9,6 +9,9 @@ export async function POST(req: Request) {
     const email = body.email;
     const password = body.password;
 
+    console.log("ADMIN_EMAIL exists:", !!process.env.ADMIN_EMAIL);
+console.log("ADMIN_PASSWORD exists:", !!process.env.ADMIN_PASSWORD);
+
     if (
       email !== process.env.ADMIN_EMAIL ||
       password !== process.env.ADMIN_PASSWORD

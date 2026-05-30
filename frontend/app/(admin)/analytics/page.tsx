@@ -118,14 +118,14 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center dark:text-white">
         Loading Analytics...
       </div>
     );
   }
 
   return (
-    <div>
+  <div className="max-w-7xl mx-auto">
 
       {/* HEADER */}
       <div className="mb-10">
@@ -134,7 +134,7 @@ export default function AnalyticsPage() {
           Analytics Dashboard
         </h1>
 
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 dark:text-gray-400 mt-2">
           Insights and ticket performance metrics
         </p>
 
@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
       {/* ANALYTICS CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
 
-        <div className="bg-white p-6 rounded-2xl shadow">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-2xl shadow">
 
           <p className="text-gray-500 text-sm">
             Total Tickets
@@ -324,4 +324,4 @@ export default function AnalyticsPage() {
 
     </div>
   );
-}
+} 

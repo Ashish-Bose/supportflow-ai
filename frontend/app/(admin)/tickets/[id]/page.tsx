@@ -217,7 +217,7 @@ function formatElapsed(
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center dark:text-white">
         Loading Ticket...
       </div>
     );
@@ -232,19 +232,19 @@ function formatElapsed(
   }
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8">
 
       <div>
         <h1 className="text-4xl font-bold">
           Ticket Details
         </h1>
 
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 dark:text-gray-400 mt-2">
           Ticket ID: {ticket.id}
         </p>
       </div>
 
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow p-6">
 
         <h2 className="text-2xl font-bold mb-4">
           Customer Information
@@ -359,7 +359,7 @@ function formatElapsed(
         e.target.value
       )
     }
-    className="border rounded-lg px-3 py-2 dark:bg-gray-800"
+    className="border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-black dark:text-white"
   >
     <option value="OPEN">
       OPEN
@@ -405,7 +405,7 @@ function formatElapsed(
           setComment(event.target.value)
         }
         rows={4}
-        className="w-full border rounded-xl p-3 dark:bg-gray-800 dark:border-gray-700"
+        className="w-full border border-gray-300 dark:border-gray-700 rounded-xl p-3 bg-white dark:bg-gray-800 text-black dark:text-white"
         placeholder="Add an internal comment..."
       />
       <button
@@ -436,7 +436,7 @@ function formatElapsed(
             <p className="font-semibold">
               {item.author}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {new Date(
                 item.createdAt
               ).toLocaleString()}
@@ -534,7 +534,7 @@ function formatElapsed(
 
 </div>
 
-      <div className="text-sm text-gray-500">
+      <div className="text-sm text-gray-500 dark:text-gray-400">
 
         Created:
 

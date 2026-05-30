@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 import {
@@ -75,13 +76,6 @@ export default function DashboardPage() {
   const closedTickets = tickets.filter(
     (ticket) => ticket.status === "CLOSED"
   ).length;
-  const resolutionRate =
-  totalTickets === 0
-    ? 0
-    : Math.round(
-        (closedTickets / totalTickets) * 100
-      );
-
   const highPriorityTickets = tickets.filter(
     (ticket) => ticket.priority === "HIGH"
   ).length;
@@ -498,12 +492,12 @@ const failedAI = tickets.filter(
     Recent Tickets
   </h2>
 
-  <a
+  <Link
     href="/tickets"
     className="text-sm font-medium text-blue-600 hover:underline"
   >
     View All →
-  </a>
+  </Link>
 </div>
 
         {recentTickets.length === 0 ? (

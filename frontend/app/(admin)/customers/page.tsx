@@ -51,15 +51,11 @@ export default function CustomersPage() {
     }
   }
 
-  const [lastRefresh, setLastRefresh] =
-  useState<Date | null>(null);
-
 useEffect(() => {
   fetchTickets();
 
   const interval = setInterval(() => {
     fetchTickets();
-    setLastRefresh(new Date());
   }, 5000);
 
   return () => clearInterval(interval);

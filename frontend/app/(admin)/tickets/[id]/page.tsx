@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -44,7 +48,7 @@ export default function TicketDetailPage() {
   const [saving, setSaving] =
   useState(false);
 
-  async function fetchTicket() {
+  const fetchTicket = useCallback(async () => {
     try {
       const response = await fetch(
         "/api/tickets"
@@ -60,11 +64,6 @@ export default function TicketDetailPage() {
 
 setTicket(foundTicket);
 
-console.log(
-  "FOUND TICKET:",
-  foundTicket
-);
-
 if (foundTicket) {
   setSelectedStatus(
     foundTicket.status
@@ -74,7 +73,7 @@ if (foundTicket) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [ticketId]);
 async function handleStatusUpdate() {
   try {
     setSaving(true);
@@ -119,7 +118,7 @@ async function handleStatusUpdate() {
 }
   useEffect(() => {
     fetchTicket();
-  }, []);
+  }, [fetchTicket]);
 
   if (loading) {
     return (

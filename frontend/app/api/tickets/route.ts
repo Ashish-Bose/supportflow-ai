@@ -247,6 +247,9 @@ export async function POST(
   "PROCESS TICKET STARTED:",
   ticket.id
 );
+console.log(
+  "ABOUT TO CALL PROCESS TICKET"
+);
 
 await processTicket(ticket.id);
 

@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useParams } from "next/navigation";
 
 type Ticket = {
@@ -31,7 +35,7 @@ export default function CustomerDetailPage() {
   const [loading, setLoading] =
     useState(true);
 
-  async function fetchTickets() {
+  const fetchTickets = useCallback(async () => {
     try {
       const response = await fetch(
         "/api/tickets"
@@ -57,11 +61,11 @@ export default function CustomerDetailPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [email]);
 
   useEffect(() => {
     fetchTickets();
-  }, []);
+  }, [fetchTickets]);
 
   if (loading) {
     return (

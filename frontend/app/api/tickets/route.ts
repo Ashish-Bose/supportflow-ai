@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import ollama from "ollama";
 import {
   sendCustomerEmail,
   sendAdminEmail,
@@ -63,51 +62,7 @@ Return ONLY JSON:
       error
     );
 
-    console.log(
-      "Gemini failed, switching to Ollama..."
-    );
-
-    const response =
-      await ollama.chat({
-        model: "mistral",
-        messages: [
-          {
-            role: "user",
-            content: `
-Analyze this support ticket.
-
-Issue:
-"${issue}"
-
-Return ONLY JSON:
-
-{
-  "summary": "short summary",
-  "sentiment": "Positive | Neutral | Negative",
-  "priority": "LOW | MEDIUM | HIGH",
-  "reply": "professional support response"
-}
-`,
-          },
-        ],
-      });
-
-    const text =
-      response.message.content
-        .replace(/```json/g, "")
-        .replace(/```/g, "")
-        .trim();
-
-    const analysis =
-      JSON.parse(text);
-
-    return {
-      summary: analysis.summary,
-      sentiment: analysis.sentiment,
-      priority: analysis.priority,
-      reply: analysis.reply,
-      source: "ollama",
-    };
+    throw error;
   }
 }
 
